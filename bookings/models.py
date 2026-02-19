@@ -93,3 +93,53 @@ class Rate(models.Model):
     def clean(self):
         if self.precio < 0:
             raise ValidationError("El precio tiene que ser mayor a 0.")
+
+class Booking(models.Model):
+    """
+    Modelo que representa la reserva completa realizada por un cliente.
+    Booking tiene:
+    - Relación con cliente, espacio (Space), franjas horarias (TimeSlot), tarifas aplicadas (Rate)
+    - Fecha
+    - Estado (pendiente, confirmada y cancelada)
+    - Notas
+    - Coste_total
+
+    Justificación on_delete:
+
+    - Si se elimina un espacio, no puede tener reservas asociadas; si las tiene, no se podrá eliminar. PROTECT
+    - Si se elimina un usuario, lo mantenemos y para ello utilizamos SET_NULL, ya que representa un registro del sistema.
+    - Si se elimina una tarifa, conservamos el precio y para ello utilizamos SET_NULL. Siempre se conservará la tarifa original aunque esta sea eliminada o modificada.
+    """
+
+    ESTADOS = [
+        ("pendiente","Pendiente"),
+        ("confirmada","Confirmada"),
+        ("cancelada","Cancelada"),
+    ]
+
+    cliente = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,null=True,blank=True,related_name="reservas", related_query_name="reserva",verbose_name="Cliente")
+    espacio = models.ForeignKey(Space,on_delete=models.PROTECT,related_name="reservas",related_query_name="reserva",verbose_name="Espacio")
+    franjas = models.ManyToManyField(TimeSlot,related_name="reservas",related_query_name="reserva",verbose_name="Franjas horarias")
+    tarifa = models.ForeignKey(Rate,on_delete=models.SET_NULL,null=True,blank=True,related_name="reservas",related_query_name="reserva",verbose_name="Tarifa")
+    fecha = models.DateField(verbose_name="Fecha")
+    estado = models.CharField(max_length=20,choices=ESTADOS,default="pendiente",verbose_name="Estado")
+    notas = models.TextField(max_length=500,blank=True,null=True,verbose_name="Notas")
+    coste_total = models.DecimalField(max_digits=7,decimal_places=2,null=True,blank=True,verbose_name="Coste total")
+
+    class Meta:
+        verbose_name = "Reserva"
+        verbose_name_plural = "Reservas"
+        ordering = ["fecha", "espacio"]
+
+    def __str__(self):
+        return f"Reserva de: {self.cliente} | Espacio: {self.espacio} | Fecha: {self.fecha}"
+
+    def clean(self):
+        """
+        Validación para evitar el solapamiento de mismo espacio, fecha y franja horaria
+        """
+        if not self.pk:
+            reservas_exis = Booking.objects.filter(espacio=self.espacio, fecha=self.fecha, franjas__in=self.franjas.all()).exists()
+
+            if reservas_exis:
+                raise ValidationError("Ya existe una reserva para esta fecha, espacio y franja horaria. Intentelo nuevamente.")
