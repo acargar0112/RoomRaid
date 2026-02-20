@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bookings.models import Space, TimeSlot
+from bookings.models import Space, TimeSlot, Rate, Booking
 
 @admin.register(Space)
 class SpaceAdmin(admin.ModelAdmin):
@@ -46,3 +46,61 @@ class TimeSlotAdmin(admin.ModelAdmin):
             ]
         })
     ]
+
+@admin.register(Rate)
+class RateAdmin(admin.ModelAdmin):
+    """
+    Modelo para Rate en admin
+    """
+    list_display = ("nombre", "precio", "activo")
+    list_filter = ("precio",)
+    search_fields = ("nombre",)
+
+    fieldsets = [
+        ('Datos Generales', {
+            'fields': [
+                'nombre',
+                'precio',
+                'condiciones'
+            ],
+        }), ("Metadatos", {
+            'fields': [
+                'activo',
+                'espacios'
+            ]
+        })
+    ]
+
+@admin.register(Booking)
+class BookingAdmin(admin.ModelAdmin):
+    """
+    Modelo para Booking en admin
+    """
+    list_display = ("id", "espacio", "cliente", "fecha", "estado", "coste_total")
+    list_filter = ("estado", "fecha", "espacio")
+    search_fields = ("espacio__nombre",)
+    autocomplete_fields = ["espacio", "cliente", "tarifa"]
+
+    fieldsets = [
+        ('Datos Generales', {
+            'fields': [
+                'cliente',
+                'espacio',
+                'franjas',
+                'tarifa',
+                'fecha'
+            ],
+        }), ("Metadatos", {
+            'fields': [
+                'notas',
+                'estado',
+                'coste_total',
+            ]
+        })
+    ]
+
+
+
+
+
+
