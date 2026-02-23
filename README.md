@@ -2,5 +2,9 @@
 RoomRaid: Coworking Scheduler | Desarrollo web en entorno servidor | Grupo 8: Andrés Cárdenas, Andrés Rivero, Alejandra Herrera-Picazo
 
 # Superuser
-user: admin 
+email: admin@admin.com  
+user: admin  
 password: admin
+
+# IMPORTANTE PARA USER!:
+## Los usuarios se registran con un email obligatorio, y se inician sesión con el email y la contraseña
