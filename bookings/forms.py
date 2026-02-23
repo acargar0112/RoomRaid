@@ -10,16 +10,37 @@ class SpaceForm(forms.ModelForm):
     class Meta:
         model = Space
         fields = ["nombre", "capacidad", "ubicacion", "recursos", "activo", "administrador"]
+        widgets = {
+            "nombre": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Nombre del espacio"
+            }),
+            "capacidad": forms.NumberInput(attrs={
+                "class": "form-control",
+                "placeholder": "Capacidad máxima"
+            }),
+            "ubicacion": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Ubicación del espacio"
+            }),
+            "recursos": forms.Select(attrs={
+                "class": "form-control",
+                "placeholder": "Recursos disponibles",
+            }),
+            "activo": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
+            "administrador": forms.Select(attrs={
+                "class": "form-select"
+            }),
+        }
 
     def clean_capacidad(self):
-        """
-        Validación capacidad
-        """
         capacidad = self.cleaned_data["capacidad"]
-
         if capacidad <= 0:
-            raise forms.ValidationError("Capacidad debe ser positivo o mayor que 0")
+            raise forms.ValidationError("Capacidad debe ser positiva o mayor que 0")
         return capacidad
+
 
 
 class TimeSlotForm(forms.ModelForm):
@@ -29,48 +50,108 @@ class TimeSlotForm(forms.ModelForm):
     class Meta:
         model = TimeSlot
         fields = ["hora_inicio", "hora_fin", "activo"]
+        widgets = {
+            "hora_inicio": forms.TimeInput(attrs={
+                "class": "form-control",
+                "type": "time"
+            }),
+            "hora_fin": forms.TimeInput(attrs={
+                "class": "form-control",
+                "type": "time"
+            }),
+            "activo": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
+        }
 
     def clean(self):
         """
         Validación hora de inicio anterior a fin
         """
-        inicio = self.cleaned_data.get("hora_inicio")
-        fin = self.cleaned_data.get("hora_fin")
+        cleaned = super().clean()
+        inicio = cleaned.get("hora_inicio")
+        fin = cleaned.get("hora_fin")
 
         if inicio and fin and inicio >= fin:
             raise forms.ValidationError("Hora de inicio debe ser anterior que fin")
-        return inicio, fin
+
+        return cleaned
+
 
 class RateForm(forms.ModelForm):
     """
-    Form para crear un Rate con validcación de precio
+    Form para crear un Rate con validación de precio
     """
     class Meta:
         model = Rate
         fields = ["nombre", "precio", "condiciones", "activo", "espacios"]
+        widgets = {
+            "nombre": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Nombre de la tarifa"
+            }),
+            "precio": forms.NumberInput(attrs={
+                "class": "form-control",
+                "placeholder": "Precio en euros",
+                "min": "0",
+                "step": "0.01"
+            }),
+            "condiciones": forms.Textarea(attrs={
+                "class": "form-control",
+                "placeholder": "Condiciones de la tarifa",
+                "rows": 3
+            }),
+            "activo": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
+            "espacios": forms.SelectMultiple(attrs={
+                "class": "form-select"
+            }),
+        }
 
-    def clean_precios(self):
+    def clean_precio(self):
         """
         Validación de precio > 0
         """
         precio = self.cleaned_data["precio"]
 
         if precio <= 0:
-            raise forms.ValidationError("Precio debe ser mayor que 0")
+            raise forms.ValidationError("El precio debe ser mayor que 0")
         return precio
+
 
 class BookingForm(forms.ModelForm):
     """
     Form para crear un Booking con validaciones
     """
+
     franjas = forms.ModelMultipleChoiceField(
         queryset=TimeSlot.objects.filter(activo=True),
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.CheckboxSelectMultiple(attrs={
+            "class": "form-check-input"
+        }),
     )
 
     class Meta:
         model = Booking
         fields = ["espacio", "franjas", "tarifa", "fecha", "notas"]
+        widgets = {
+            "espacio": forms.Select(attrs={
+                "class": "form-select"
+            }),
+            "tarifa": forms.Select(attrs={
+                "class": "form-select"
+            }),
+            "fecha": forms.DateInput(attrs={
+                "class": "form-control",
+                "type": "date"
+            }),
+            "notas": forms.Textarea(attrs={
+                "class": "form-control",
+                "placeholder": "Notas adicionales",
+                "rows": 3
+            }),
+        }
 
     def __init__(self, *args, **kwargs):
         """
@@ -90,18 +171,20 @@ class BookingForm(forms.ModelForm):
             raise forms.ValidationError("No puedes reservar fechas pasadas")
         return fecha
 
-    def clean_franja(self):
+    def clean_franjas(self):
         """
         Validacion de franjas horarias para que tengan que seleccionar 1 y sigan un bloque continuo (Ej: 09:00 - 10:00, 10:00 - 11:00, 11:00 - 12:00)
         """
-        franja = self.cleaned_data["franjas"]
+        franja = self.cleaned_data.get("franjas")
         if not franja:
-            raise forms.ValidationError("Selecciona una franja")
+            raise forms.ValidationError("Selecciona al menos una franja")
+
         ordered = sorted(franja, key=lambda f: f.hora_inicio)
         for i in range(len(ordered) - 1):
-            if ordered[1].hora_fin != ordered[i + 1].hora_inicio:
+            if ordered[i].hora_fin != ordered[i + 1].hora_inicio:
                 raise forms.ValidationError("Las franjas deben formar un bloque continuo")
-            return franja
+
+        return franja
 
     def clean(self):
         """
@@ -111,6 +194,7 @@ class BookingForm(forms.ModelForm):
         espacio = cleaned.get("espacio")
         fecha = cleaned.get("fecha")
         franja = cleaned.get("franjas")
+
         if not (espacio and fecha and franja):
             return cleaned
 
@@ -121,7 +205,10 @@ class BookingForm(forms.ModelForm):
         ).filter(franjas__in=franja).distinct()
 
         if existe.exists():
-            raise forms.ValidationError("Algunas de las franjas horarias ya están reservadas para esta sala")
+            raise forms.ValidationError(
+                "Algunas de las franjas horarias ya están reservadas para esta sala"
+            )
+
         return cleaned
 
 
