@@ -16,6 +16,7 @@ class  Space(models.Model):
     nombre = models.CharField(max_length=150, unique=True, verbose_name="Nombre")
     capacidad = models.PositiveIntegerField(verbose_name="Capacidad")
     ubicacion = models.CharField(max_length=150,verbose_name="Ubicacion")
+    contador_reservas = models.PositiveIntegerField(default=0)
     RECURSOS_OPCIONALES = [
         ("proyector", "Proyector"),
         ("pizarra", "Pizarra"),
