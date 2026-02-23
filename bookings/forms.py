@@ -36,6 +36,9 @@ class SpaceForm(forms.ModelForm):
         }
 
     def clean_capacidad(self):
+        """
+        Función para validar la capacidad pasitiva a mayor que 0
+        """
         capacidad = self.cleaned_data["capacidad"]
         if capacidad <= 0:
             raise forms.ValidationError("Capacidad debe ser positiva o mayor que 0")

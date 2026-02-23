@@ -48,13 +48,13 @@ def filtrar_espacios(capacidad_minima=None, recurso=None):
 
 # 2) F EXPRESSIONS
 
-#def incrementar_contador_reservas(espacio):
+def incrementar_contador_reservas(espacio):
     """
     Incrementa el contador de reservas de un espacio usando F expressions.
     Se quedará comentada hasta poder añadir el campo "contador_reservas" al modelo (Ya que hay un PR y si lo cambio ahora podría dar problemas)
     """
-#    espacio.contador_reservas = F("contador_reservas") + 1
-#    espacio.save(update_fields=["contador_reservas"])
+    espacio.contador_reservas = F("contador_reservas") + 1
+    espacio.save(update_fields=["contador_reservas"])
 
 
 # 3) ANNOTATE
