@@ -3,14 +3,41 @@ from accounts.models import User, Profile
 
 class RegisterForm(forms.ModelForm):
     """
-    Modelo form para registro de usuario
+    Modelo form para registrar usuario
     """
-    password1 = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
+    password1 = forms.CharField(
+        label="Contraseña",
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "Introduce tu contraseña"
+        })
+    )
+    password2 = forms.CharField(
+        label="Repetir contraseña",
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "Repite tu contraseña"
+        })
+    )
 
     class Meta:
         model = User
         fields = ["email", "username", "display_name"]
+        widgets = {
+            "email": forms.EmailInput(attrs={
+                "class": "form-control",
+                "placeholder": "Correo electrónico"
+            }),
+            "username": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Nombre de usuario"
+            }),
+            "display_name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Nombre visible"
+            }),
+        }
+
 
     def clean_password(self):
         """
@@ -36,14 +63,38 @@ class LoginForm(forms.Form):
     """
     Modelo form para login de usuario
     """
-    email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            "class": "form-control",
+            "placeholder": "Correo electrónico"
+        })
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "Contraseña"
+        })
+    )
 
 
 class ProfileForm(forms.ModelForm):
     """
-    Modelo form para registrar perfiles de usuario
+    Modelo para Profile de usuario
     """
     class Meta:
         model = Profile
         fields = ["empresa", "telefono", "preferencia"]
+        widgets = {
+            "empresa": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Nombre de la empresa"
+            }),
+            "telefono": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Número de teléfono"
+            }),
+            "preferencia": forms.Select(attrs={
+                "class": "form-select"
+            }),
+        }
+

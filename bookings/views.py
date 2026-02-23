@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 
 class SpaceListView(LoginRequiredMixin, ListView):
    model = Space
-   template_name = "templates/spaces/list.html"
+   template_name = "spaces/list.html"
    context_object_name = "spaces"
 
 
@@ -32,20 +32,20 @@ class SpaceListView(LoginRequiredMixin, ListView):
 class SpaceCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
    model = Space
    form_class = SpaceForm
-   template_name = "templates/spaces/form.html"
+   template_name = "spaces/form.html"
    permission_required = "spaces.add_space"
    success_url = reverse_lazy("space_list")
 
 class SpaceUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
    model = Space
    form_class = SpaceForm
-   template_name = "templates/spaces/form.html"
+   template_name = "spaces/form.html"
    permission_required = "spaces.change_space"
    success_url = reverse_lazy("space_list")
 
 class SpaceDetailView(LoginRequiredMixin, DetailView):
    model = Space
-   template_name = "templates/spaces/detail.html"
+   template_name = "spaces/detail.html"
    context_object_name = "spaces"
 
 
@@ -53,32 +53,28 @@ class SpaceDetailView(LoginRequiredMixin, DetailView):
 
 class TimeSlotListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
    model = TimeSlot
-   template_name = "templates/timeslots/list.html"
+   template_name = "timeslots/list.html"
    permission_required = "timeslots.view_timeslot"
 
 class TimeSlotCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
    model = TimeSlot
    form_class = TimeSlotForm
-   template_name = "templates/timeslots/form.html"
+   template_name = "timeslots/form.html"
    permission_required = "timeslots.add_timeslot"
    success_url = reverse_lazy("timeslot_list")
 
 class TimeSlotUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
    model = TimeSlot
    form_class = TimeSlotForm
-   template_name = "templates/timeslots/form.html"
+   template_name = "timeslots/form.html"
    permission_required = "timeslots.change_timeslot"
    success_url = reverse_lazy("timeslot_list")
 
 
 
-
-
-
-
 class BookingListView(LoginRequiredMixin, ListView):
    model = Booking
-   template_name = "templates/bookings/list.html"
+   template_name = "bookings/list.html"
 
 
    def get_queryset(self):
@@ -100,7 +96,7 @@ class BookingListView(LoginRequiredMixin, ListView):
 class BookingCreateView(LoginRequiredMixin, CreateView):
    model = Booking
    form_class = BookingForm
-   template_name = "templates/bookings/form.html"
+   template_name = "bookings/form.html"
 
 
    def form_valid(self, form):
