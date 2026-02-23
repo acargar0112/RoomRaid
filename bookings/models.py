@@ -25,8 +25,7 @@ class  Space(models.Model):
     ]
     recursos = models.CharField(max_length=50, choices=RECURSOS_OPCIONALES, verbose_name="Recursos")
     activo = models.BooleanField(default=True, verbose_name="Activo")
-    # Administrator requiere aportación del Rol 2
-    administrador = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Administrador")
+    administrador = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Administrador", related_name="espacios_administrados", related_query_name="espacio_administrado")
 
     class Meta:
         verbose_name = "Espacio"
@@ -130,16 +129,8 @@ class Booking(models.Model):
         verbose_name = "Reserva"
         verbose_name_plural = "Reservas"
         ordering = ["fecha", "espacio"]
+        unique_together = ("cliente","espacio","fecha")
 
     def __str__(self):
         return f"Reserva de: {self.cliente} | Espacio: {self.espacio} | Fecha: {self.fecha}"
 
-    def clean(self):
-        """
-        Validación para evitar el solapamiento de mismo espacio, fecha y franja horaria
-        """
-        if not self.pk:
-            reservas_exis = Booking.objects.filter(espacio=self.espacio, fecha=self.fecha, franjas__in=self.franjas.all()).exists()
-
-            if reservas_exis:
-                raise ValidationError("Ya existe una reserva para esta fecha, espacio y franja horaria. Intentelo nuevamente.")
