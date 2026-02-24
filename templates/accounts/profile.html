@@ -1,23 +1,9 @@
-{% extends "base.html" %}
+{% extends 'form_base.html' %}
 
-{% block titulo %}Editar Pefil{% endblock %}
+{% block form-titulo %}
+<h2>Mi perfil</h2>
+{% endblock %}
 
-{% block contenido %}
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="mb-4">Editar Perfil</h2>
-
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-
-                        <button type="submit" class="btn btn-primary w-100">Guardar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
+{% block add_botones %}
+<a href="{% url 'home' %}" class="btn btn-secondary ms-2">Volver</a>
 {% endblock %}

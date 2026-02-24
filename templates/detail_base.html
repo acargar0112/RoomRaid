@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Detalle{% endblock %}
+
+{% block contenido %}
+<div class="card shadow-sm p-4">
+
+    {% block titulo-details %}
+    <h2>Detalle</h2>
+    {% endblock %}
+
+    <div class="mb-3">
+        {% block contenido-details %}{% endblock %}
+    </div>
+
+    {% block botones-details %}
+        <a href="{% url 'space_list' %}" class="btn btn-secondary">Volver</a>
+    {% endblock %}
+</div>
+{% endblock %}

@@ -1,10 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "list_base.html" %}
 
-</body>
-</html>
+{% block list-titulo %}<h2>Franjas horarias</h2>{% endblock %}
+
+{% block boton-list %}
+    {% if user.is_superuser %}
+        <a href="{% url 'timeslot_create' %}" class="btn btn-primary">Crear franja</a>
+    {% endif %}
+{% endblock %}
+
+{% block cabecera-list %}
+    <tr>
+        <th>Inicio</th>
+        <th>Fin</th>
+        <th>Activo</th>
+        <th>Acciones</th>
+    </tr>
+{% endblock %}
+
+{% block filas-list %}
+{% for timeslot in timeslots %}
+    <tr>
+        <td>{{ timeslot.hora_inicio }}</td>
+        <td>{{ timeslot.hora_fin }}</td>
+        <td>{{ timeslot.activo }}</td>
+        <td>
+            {% if user.is_superuser %}
+                <a href="{% url 'timeslot_update' timeslot.id %}" class="btn btn-sm btn-warning">Editar</a>
+            {% endif %}
+        </td>
+    </tr>
+{% endfor %}
+{% endblock %}

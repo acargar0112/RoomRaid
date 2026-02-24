@@ -1,10 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block titulo %}Estadísticas{% endblock %}
+
+{% block contenido %}
+
+    <h2 class="mb-4">Dashboard de estadísticas</h2>
+
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-4">
+                <h5>Total de reservas</h5>
+                <p class="display-6">{{ total_reservas }}</p>
+            </div>
+        </div>
+
+
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-4">
+                <h5>Espacio más reservado</h5>
+                <p class="fs-4">{{ espacio_top }}</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-4">
+                <h5>Ingresos totales</h5>
+                <p class="display-6">{{ ingresos_totales }} €</p>
+            </div>
+        </div>
+
+    </div>
+
+    <h4 class="mt-4">Reservas por mes</h4>
+    <ul>
+        {% for mes, cantidad in reservas_por_mes.items %}
+            <li>{{ mes }}: {{ cantidad }}</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

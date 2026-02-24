@@ -1,10 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "detail_base.html" %}
 
-</body>
-</html>
+{% block titulo-details %}<h2>Detalle de la reserva</h2>{% endblock %}
+
+{% block contenido-details %}
+    <p><strong>Fecha:</strong> {{ booking.fecha }}</p>
+    <p><strong>Espacio:</strong> {{ booking.espacio.nombre }}</p>
+    <p><strong>Estado:</strong> {{ booking.get_estado_display }}</p>
+
+    {%  if booking.cliente %}
+        <p><strong>Cliente:</strong> {{ booking.cliente }}</p>
+    {% endif %}
+
+    <p><strong>Tarifa:</strong> {{ booking.tarifa }}</p>
+
+    <p><strong>Franjas horarias:</strong></p>
+    <ul>
+        {% for franja in booking.franjas.all %}
+            <li>{{ franja }}</li>
+        {% endfor %}
+    </ul>
+
+    {% if booking.notas %}
+        <p><strong>Notas:</strong> {{ booking.notas }}</p>
+    {% endif %}
+
+    {% if booking.coste_total %}
+        <p><strong>Coste total:</strong> {{ booking.coste_total }}€</p>
+    {% endif %}
+
+{% endblock %}
+
+{% block botones-details %}
+    <a href="{% url 'booking_list' %}" class="btn btn-secondary">Volver</a>
+
+{% if booking.estado != "cancelada" %}
+    <a href="{% url 'booking_cancel' booking.id %}" class="btn btn-danger ms-2">Cancelar</a>
+{% endif %}
+
+{% endblock %}
