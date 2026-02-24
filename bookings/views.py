@@ -10,6 +10,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from core.mixins import AdminOnlyMixin, OwnerOrAdminBookingMixin
 
 
 def es_admin(user):
@@ -24,33 +25,27 @@ class SpaceListView(LoginRequiredMixin, ListView):
    """
     Muestra el listado de todos los espacios registrados en el sistema.
    """
+   model = Space
    template_name = "spaces/list.html"
    context_object_name = "spaces"
 
-class SpaceCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class SpaceCreateView(AdminOnlyMixin, CreateView):
    """
    Permite crear un nuevo espacio (requiere permiso add_space).
    """
    model = Space
    form_class = SpaceForm
    template_name = "spaces/form.html"
-   permission_required = "spaces.add_space"
    success_url = reverse_lazy("space_list")
 
 
-   def dispatch(self, request, *args, **kwargs):
-       if not es_admin(request.user):
-           raise PermissionDenied
-       return super().dispatch(request, *args, **kwargs)
-
-class SpaceUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class SpaceUpdateView(AdminOnlyMixin, UpdateView):
    """
    Permite editar un espacio existente (requiere permiso change_space).
    """
    model = Space
    form_class = SpaceForm
    template_name = "spaces/form.html"
-   permission_required = "spaces.change_space"
    success_url = reverse_lazy("space_list")
 
 class SpaceDetailView(LoginRequiredMixin, DetailView):
@@ -65,32 +60,30 @@ class SpaceDetailView(LoginRequiredMixin, DetailView):
 
 
 
-class TimeSlotListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+class TimeSlotListView(AdminOnlyMixin, ListView):
    """
    Muestra el listado de todas las franjas horarias disponibles.
    """
    model = TimeSlot
    template_name = "timeslots/list.html"
-   permission_required = "timeslots.view_timeslot"
 
-class TimeSlotCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+
+class TimeSlotCreateView(AdminOnlyMixin, CreateView):
    """
    Permite crear una nueva franja horaria (requiere permiso add_timeslot).
    """
    model = TimeSlot
    form_class = TimeSlotForm
    template_name = "timeslots/form.html"
-   permission_required = "timeslots.add_timeslot"
    success_url = reverse_lazy("timeslot_list")
 
-class TimeSlotUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class TimeSlotUpdateView(AdminOnlyMixin, UpdateView):
    """
    Permite modificar una franja horaria existente.
    """
    model = TimeSlot
    form_class = TimeSlotForm
    template_name = "timeslots/form.html"
-   permission_required = "timeslots.change_timeslot"
    success_url = reverse_lazy("timeslot_list")
 
 
@@ -98,40 +91,36 @@ class TimeSlotUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView
 
 
 
-class RateListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+class RateListView(AdminOnlyMixin, ListView):
     """
     Muestra el listado de todas las tarifas disponibles.
     """
     model = Rate
     template_name = "rates/list.html"
-    permission_required = "rates.view_rate"
 
-class RateDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+class RateDetailView(AdminOnlyMixin, DetailView):
     """
     Muestra el detalle de una tarifa específica.
     """
     model = Rate
     template_name = "rates/detail.html"
-    permission_required = "rates.view_rate"
 
-class RateCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class RateCreateView(AdminOnlyMixin, CreateView):
     """
     Permite crear una nueva tarifa asociable a espacios.
     """
     model = Rate
     form_class = RateForm
     template_name = "rates/form.html"
-    permission_required = "rates.add_rate"
     success_url = reverse_lazy("rate_list")
 
-class RateUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class RateUpdateView(AdminOnlyMixin, UpdateView):
     """
     Permite editar una tarifa existente.
     """
     model = Rate
     form_class = RateForm
     template_name = "rates/form.html"
-    permission_required = "rates.change_rate"
     success_url = reverse_lazy("rate_list")
 
 
@@ -158,17 +147,22 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
    model = Booking
    form_class = BookingForm
    template_name = "bookings/form.html"
+   success_url = reverse_lazy("booking_list")
 
    def dispatch(self, request, *args, **kwargs):
-        if not request.user.groups.filter(name="cliente").exists():
-            raise PermissionDenied
-        return super().dispatch(request, *args, **kwargs)
+       es_cliente = request.user.groups.filter(name="cliente").exists()
+       es_admin = request.user.is_staff
+
+       if not (es_cliente or es_admin):
+           raise PermissionDenied
+
+       return super().dispatch(request, *args, **kwargs)
 
    def form_valid(self, form):
         form.instance.cliente = self.request.user
         return super().form_valid(form)
 
-class BookingDetailView(LoginRequiredMixin, DetailView):
+class BookingDetailView(OwnerOrAdminBookingMixin, DetailView):
     """
     Muestra el detalle completo de una reserva específica.
     """

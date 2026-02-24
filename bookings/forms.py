@@ -130,14 +130,13 @@ class BookingForm(forms.ModelForm):
 
     franjas = forms.ModelMultipleChoiceField(
         queryset=TimeSlot.objects.filter(activo=True),
-        widget=forms.CheckboxSelectMultiple(attrs={
-            "class": "form-check-input"
-        }),
+        widget=forms.CheckboxSelectMultiple,
+        label="Franjas"
     )
 
     class Meta:
         model = Booking
-        fields = ["espacio", "franjas", "tarifa", "fecha", "notas"]
+        fields = ["espacio", "tarifa", "fecha", "notas"]
         widgets = {
             "espacio": forms.Select(attrs={
                 "class": "form-select"
