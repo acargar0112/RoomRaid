@@ -22,8 +22,13 @@ urlpatterns = [
     path('rates/<int:pk>/edit/', RateUpdateView.as_view(), name='rate_update'),
 
     # Bookings
-    path('bookings/', BookingListView.as_view(), name='booking_list'),
-    path('bookings/create/', BookingCreateView.as_view(), name='booking_create'),
-    path('bookings/<int:pk>/', BookingDetailView.as_view(), name='booking_detail'),
-    path('bookings/<int:pk>/cancel/', cancelar_reserva, name='booking_cancel')
+    path('list/', BookingListView.as_view(), name='booking_list'),
+    path('create/', BookingCreateView.as_view(), name='booking_create'),
+    path('details/<int:pk>/', BookingDetailView.as_view(), name='booking_detail'),
+    path('<int:pk>/cancel/', cancelar_reserva, name='booking_cancel'),
+
+    #FBV
+    path('bookings/<int:pk>/cancel/', cancelar_reserva, name='booking_cancel'),
+    path('stats/', stats_view, name='stats'),
+    path('occupancy/', occupancy_view, name='occupancy')
 ]
