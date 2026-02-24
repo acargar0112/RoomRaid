@@ -1,10 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "list_base.html" %}
 
-</body>
-</html>
+{% block list-titulo %}<h2>Reservas</h2>{% endblock %}
+
+{% block boton-list %}
+    <a href="{% url 'booking_create' %}" class="btn btn-primary">Crear reserva</a>
+{% endblock %}
+
+{% block cabecera-list %}
+    <tr>
+        <th>Fecha</th>
+        <th>Espacio</th>
+        <ht>Estado</ht>
+
+        {% if user.is_superuser %}
+        <th>Cliente</th>
+        {% endif %}
+
+        <th>Acciones</th>
+    </tr>
+
+{% endblock %}
+
+{% block filas-list %}
+{% for booking in bookings %}
+    <tr>
+        <td>{{ booking.fecha }}</td>
+        <td>{{ booking.espacio.nombre }}</td>
+        <td>{{ booking.get_estado_display }}</td>
+
+        {% if user.is_superuser %}
+            <td>{{ booking.cliente }}</td>
+        {% endif %}
+
+        <td>
+            <a href="{% url 'booking_detail' booking.id %}" class="btn btn-sm btn-info">Ver</a>
+        </td>
+    </tr>
+{% endfor %}
+{% endblock %}

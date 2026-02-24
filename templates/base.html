@@ -10,7 +10,7 @@
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
         <div class="container">
-            <a class="navbar-brand" href="/">RoomRaid</a>
+            <a class="navbar-brand" href="{% url 'home' %}">RoomRaid</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -18,29 +18,47 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/spaces/">Espacios</a>
-                    </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/timeslots/">Franjas</a>
-                    </li>
+                    {% if user.is_authenticated %}
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/rates/">Tarifas</a>
-                    </li>
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'space_list' %}">Espacios</a>
+                            </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/bookings/">Reservas</a>
-                    </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'timeslot_list' %}">Franjas</a>
+                            </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/occupancy/">Ocupación</a>
-                    </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'rate_list' %}">Tarifas</a>
+                            </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/stats/">Estadísticas</a>
-                    </li>
+                            <li class="nav-item">
+                                <a class="nav-link">Estadísticas</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'booking_list' %}">Reservas</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link">Ocupación</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-warning" href="{% url 'logout' %}">Salir</a>
+                        </li>
+
+                    {% else %}
+
+                        <li>
+                            <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+                        </li>
+
+                    {% endif %}
+
                 </ul>
             </div>
         </div>

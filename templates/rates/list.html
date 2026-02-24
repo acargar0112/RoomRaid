@@ -1,10 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "list_base.html" %}
 
-</body>
-</html>
+{% block list-titulo %}<h2>Tarifas</h2>{% endblock %}
+
+{% block boton-list %}
+    {% if user.is_superuser %}
+        <a href="{% url 'rate_create' %}" class="btn btn-primary">Crear tarifa</a>
+    {% endif %}
+{% endblock %}
+
+{% block cabecera-list %}
+    <tr>
+        <th>Nombre</th>
+        <th>Precio</th>
+        <th>Activo</th>
+        <th>Acciones</th>
+    </tr>
+{% endblock %}
+
+{% block filas-list %}
+    {% for rate in rates %}
+        <tr>
+            <td>{{ rate.nombre }}</td>
+            <td>{{ rate.precio }}€</td>
+            <td>{{ rate.activo }}</td>
+            <td>
+                <a href="{% url 'rate_detail' rate.id %}" class="btn btn-sm btn-info">Ver</a>
+
+                {% if user.is_superuser %}
+                    <a href="{% url 'rate_update' rate.id %}" class="btn btn-sm btn-warning">Editar</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}

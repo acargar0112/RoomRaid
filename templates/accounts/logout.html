@@ -1,19 +1,9 @@
-{% extends "base.html" %}
+{% extends 'form_base.html' %}
 
-{% block titulo %}Cerrar sesión{% endblock %}
+{% block form-titulo %}
+<h2>¿Estas segura de cerrar la sesión?</h2>
+{% endblock %}
 
-{% block contenido %}
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <form action="{% url 'logout' %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger w-100">Cerrar sesión</button>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
+{% block add_botones %}
+<a href="{% url 'home' %}" class="btn btn-secondary ms-2">Cancelar</a>
 {% endblock %}

@@ -66,6 +66,7 @@ class TimeSlotListView(AdminOnlyMixin, ListView):
    """
    model = TimeSlot
    template_name = "timeslots/list.html"
+   context_object_name = "timeslots"
 
 
 class TimeSlotCreateView(AdminOnlyMixin, CreateView):
@@ -97,6 +98,7 @@ class RateListView(AdminOnlyMixin, ListView):
     """
     model = Rate
     template_name = "rates/list.html"
+    context_object_name = "rates"
 
 class RateDetailView(AdminOnlyMixin, DetailView):
     """
@@ -132,6 +134,7 @@ class BookingListView(LoginRequiredMixin, ListView):
    """
    model = Booking
    template_name = "bookings/list.html"
+   context_object_name = "bookings"
 
    def get_queryset(self):
       qs = Booking.objects.all()

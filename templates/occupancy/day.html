@@ -1,10 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block titulo %}Ocupación diaria{% endblock %}
+
+{% block contenido %}
+    <h2 class="mb-4">Ocupación del día {{ fecha }}</h2>
+
+    <table class="table table-bordered text-center align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Espacio</th>
+                {% for franja in franjas %}
+                    <th>{{ franja.hora_inicio }} - {{ franja.hora_fin }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for espacio in espacios %}
+                <tr>
+                    <td><strong>{{ espacio.nombre }}</strong></td>
+
+                    {% for franja in franjas %}
+                        {% if ocupacion|default:{}|dict_get:espacio.id|dict_get:franja.id %}
+                            <td class="bg-danger text-white">Reservado</td>
+                        {% else %}
+                            <td class="bg-success text-white">Libre</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

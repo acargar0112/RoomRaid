@@ -1,26 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'form_base.html' %}
 
-{% block titulo %}{{ title }}{% endblock %}
+{% block form-titulo %}
+    <h2>Crear reserva</h2>
+{% endblock %}
 
-{% block contenido %}
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="mb-4">{{ title }}</h2>
-
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-
-                        <div class="mt-3">
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                            <a href="/" class="btn btn-secondary">Cancelar</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
+{% block add_botones %}
+    <a href="{% url 'space_list'  %}" class="btn btn-secondary">Volver</a>
 {% endblock %}

@@ -1,5 +1,8 @@
 from django.db.models import Q, F, Count
 from .models import Booking, Space
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth
+import calendar
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -110,4 +113,36 @@ def reservas_optimizadas():
 
     return Booking.objects.select_related("cliente","espacio","tarifa").prefetch_related("franjas")
 
+# CONSULTAS NECESARIAS PARA EL DASHBOARD
 
+def reservas_por_mes():
+    """
+    Devuelve el número de reservas agrupadas por mes
+    """
+    return Booking.objects.annotate(mes=ExtractMonth("fecha")).values("mes").annotate(total=Count("id")).order_by("mes")
+
+def total_reservas():
+    """
+    Devuelve el número total de reservas registradas
+    """
+    return Booking.objects.count()
+
+def espacio_mas_reservado():
+    """
+    Devuelve el espacio al cual le han hecho mas reservas.
+    """
+    return Space.objects.annotate(total=Count("reservas")).order_by("-total").first()
+
+def ingresos_totales():
+    """
+    Devuelve la suma total de todas las reservas
+    """
+    return Booking.objects.aggregate(total=Sum("coste_total"))["total"]
+
+# CONSULTA NECESARIA PARA OCCUPANCY
+
+def esta_reservado(espacio_id, franja_id, fecha):
+    """
+    Devuelve True si existe una reserva para un espacio, franja y fecha.
+    """
+    return Booking.objects.filter(espacio_id=espacio_id,franjas=franja_id,fecha=fecha,estado__in=["pendiente","confirmada"]).exists()
