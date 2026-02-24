@@ -67,7 +67,7 @@ def espacios_con_numero_de_franjas():
     Devuelve los espacios con el número total de franjas reservadas.
     """
 
-    return Space.objects.annotate(total_franjas=Count("reservas__franjas", distinct=True)).order_by("-total_franjas")
+    return Space.objects.annotate(total_franjas=Count("reserva__franjas", distinct=True)).order_by("-total_franjas")
 
 
 def clientes_con_reservas_activas():
@@ -75,14 +75,14 @@ def clientes_con_reservas_activas():
     Devuelve clientes con el número de reservas activas
     """
 
-    return User.objects.annotate(reservas_activas=Count("reservas", filter=Q(reservas__estado="confirmada"))).order_by("-reservas_activas")
+    return User.objects.annotate(reservas_activas=Count("booking_set", filter=Q(booking_set__estado="confirmada"))).order_by("-reservas_activas")
 
 def top_salas_mas_usadas(top=5):
     """
     Muestra las salas mas usadas.
     Máximo 5.
     """
-    return Space.objects.annotate(total_reservas=Count("reservas")).order_by("-total_reservas")[:top]
+    return Space.objects.annotate(total_reservas=Count("reserva")).order_by("-total_reservas")[:top]
 
 
 # 4) AGGREGATE
@@ -131,13 +131,13 @@ def espacio_mas_reservado():
     """
     Devuelve el espacio al cual le han hecho mas reservas.
     """
-    return Space.objects.annotate(total=Count("reservas")).order_by("-total").first()
+    return Space.objects.annotate(total=Count("reserva")).order_by("-total").first()
 
 def ingresos_totales():
     """
     Devuelve la suma total de todas las reservas
     """
-    return Booking.objects.aggregate(total=Sum("coste_total"))["total"]
+    return Booking.objects.aggregate(total=Sum("coste_total"))["total"] or 0
 
 # CONSULTA NECESARIA PARA OCCUPANCY
 

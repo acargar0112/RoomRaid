@@ -1,14 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
-
 import calendar
 
-from django.views.generic import ListView, CreateView, UpdateView, DetailView, TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.utils.dateparse import parse_date
 
+from core.mixins import AdminOnlyMixin, OwnerOrAdminBookingMixin
 from .models import Space, TimeSlot, Booking, Rate
 from .forms import SpaceForm, BookingForm, TimeSlotForm, RateForm
 from .services import (
@@ -17,9 +17,6 @@ from .services import (
     reservas_optimizadas,
     incrementar_contador_reservas,
     ocupacion_total_por_dia,
-    espacios_con_numero_de_franjas,
-    clientes_con_reservas_activas,
-    top_salas_mas_usadas,
     reservas_por_mes,
     total_reservas,
     espacio_mas_reservado,
@@ -28,15 +25,11 @@ from .services import (
 )
 
 
-def es_admin(user):
-    return user.groups.filter(name="admin").exists()
-
-
 class HomeView(TemplateView):
     template_name = "base.html"
 
 
-class SpaceListView(LoginRequiredMixin, ListView):
+class SpaceListView(AdminOnlyMixin, ListView):
     """
     Muestra el listado de todos los espacios registrados en el sistema.
     Permite filtrar por capacidad mínima o recurso (Q objects).
@@ -54,33 +47,37 @@ class SpaceListView(LoginRequiredMixin, ListView):
             recurso=recurso
         )
 
-class SpaceCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+
+class SpaceCreateView(AdminOnlyMixin, CreateView):
    """
    Permite crear un nuevo espacio (requiere permiso add_space).
    """
    model = Space
    form_class = SpaceForm
    template_name = "spaces/form.html"
-   permission_required = "spaces.add_space"
    success_url = reverse_lazy("space_list")
 
 
-   def dispatch(self, request, *args, **kwargs):
-       if not es_admin(request.user):
-           raise PermissionDenied
-       return super().dispatch(request, *args, **kwargs)
-
-class SpaceUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class SpaceUpdateView(AdminOnlyMixin, UpdateView):
    """
    Permite editar un espacio existente (requiere permiso change_space).
    """
    model = Space
    form_class = SpaceForm
    template_name = "spaces/form.html"
-   permission_required = "spaces.change_space"
    success_url = reverse_lazy("space_list")
 
-class SpaceDetailView(LoginRequiredMixin, DetailView):
+
+class SpaceDeleteView(AdminOnlyMixin, DeleteView):
+   """
+   Permite eliminar un espacio existente.
+   """
+   model = Space
+   template_name = "spaces/delete.html"
+   success_url = reverse_lazy("space_list")
+
+
+class SpaceDetailView(AdminOnlyMixin, DetailView):
    """
    Muestra el detalle completo de un espacio concreto.
    """
@@ -92,32 +89,41 @@ class SpaceDetailView(LoginRequiredMixin, DetailView):
 
 
 
-class TimeSlotListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+class TimeSlotListView(AdminOnlyMixin, ListView):
    """
    Muestra el listado de todas las franjas horarias disponibles.
    """
    model = TimeSlot
    template_name = "timeslots/list.html"
-   permission_required = "timeslots.view_timeslot"
+   context_object_name = "timeslots"
 
-class TimeSlotCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+
+class TimeSlotCreateView(AdminOnlyMixin, CreateView):
    """
    Permite crear una nueva franja horaria (requiere permiso add_timeslot).
    """
    model = TimeSlot
    form_class = TimeSlotForm
    template_name = "timeslots/form.html"
-   permission_required = "timeslots.add_timeslot"
    success_url = reverse_lazy("timeslot_list")
 
-class TimeSlotUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+
+class TimeSlotUpdateView(AdminOnlyMixin, UpdateView):
    """
    Permite modificar una franja horaria existente.
    """
    model = TimeSlot
    form_class = TimeSlotForm
    template_name = "timeslots/form.html"
-   permission_required = "timeslots.change_timeslot"
+   success_url = reverse_lazy("timeslot_list")
+
+
+class TimeSlotDeleteView(AdminOnlyMixin, DeleteView):
+   """
+   Permite eliminar una franja horaria existente.
+   """
+   model = TimeSlot
+   template_name = "timeslots/delete.html"
    success_url = reverse_lazy("timeslot_list")
 
 
@@ -125,40 +131,49 @@ class TimeSlotUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView
 
 
 
-class RateListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+class RateListView(AdminOnlyMixin, ListView):
     """
     Muestra el listado de todas las tarifas disponibles.
     """
     model = Rate
     template_name = "rates/list.html"
-    permission_required = "rates.view_rate"
+    context_object_name = "rates"
 
-class RateDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+
+class RateDetailView(AdminOnlyMixin, DetailView):
     """
     Muestra el detalle de una tarifa específica.
     """
     model = Rate
     template_name = "rates/detail.html"
-    permission_required = "rates.view_rate"
 
-class RateCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+
+class RateCreateView(AdminOnlyMixin, CreateView):
     """
     Permite crear una nueva tarifa asociable a espacios.
     """
     model = Rate
     form_class = RateForm
     template_name = "rates/form.html"
-    permission_required = "rates.add_rate"
     success_url = reverse_lazy("rate_list")
 
-class RateUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+
+class RateUpdateView(AdminOnlyMixin, UpdateView):
     """
     Permite editar una tarifa existente.
     """
     model = Rate
     form_class = RateForm
     template_name = "rates/form.html"
-    permission_required = "rates.change_rate"
+    success_url = reverse_lazy("rate_list")
+
+
+class RateDeleteView(AdminOnlyMixin, DeleteView):
+    """
+    Permite eliminar una tarifa existente.
+    """
+    model = Rate
+    template_name = "rates/delete.html"
     success_url = reverse_lazy("rate_list")
 
 
@@ -188,7 +203,7 @@ class BookingListView(LoginRequiredMixin, ListView):
             fecha_fin=fecha_fin
         )
 
-        if es_admin(self.request.user):
+        if self.request.user.is_staff:
             return qs
 
         return qs.filter(cliente=self.request.user)
@@ -201,10 +216,15 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
     model = Booking
     form_class = BookingForm
     template_name = "bookings/form.html"
+    success_url = reverse_lazy("booking_list")
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.groups.filter(name="cliente").exists():
+        es_cliente = request.user.groups.filter(name="cliente").exists()
+        es_admin = request.user.is_staff
+
+        if not (es_cliente or es_admin):
             raise PermissionDenied
+
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -216,7 +236,7 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
 
         return response
 
-class BookingDetailView(LoginRequiredMixin, DetailView):
+class BookingDetailView(OwnerOrAdminBookingMixin, DetailView):
     """
     Muestra el detalle completo de una reserva específica.
     Usa consultas optimizadas.
@@ -226,7 +246,7 @@ class BookingDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         qs = reservas_optimizadas()
 
-        if es_admin(self.request.user):
+        if self.request.user.is_staff:
             return qs
 
         return qs.filter(cliente=self.request.user)
@@ -242,7 +262,7 @@ def cancelar_reserva(request, pk):
    """
    reserva = get_object_or_404(Booking, pk=pk)
 
-   if not es_admin(request.user) and reserva.cliente != request.user:
+   if not request.user.is_staff and reserva.cliente != request.user:
        raise PermissionDenied
 
    reserva.estado = "cancelada"
@@ -257,20 +277,16 @@ def stats_view(request):
     Muestra estadísticas globales del sistema.
     Solo accesible para ADMIN.
     """
-    if not es_admin(request.user):
+    if not request.user.is_staff:
         raise PermissionDenied
 
-    # Total de reservas
     total = total_reservas()
 
-    # Espacio más reservado (puede ser None si no hay reservas)
     espacio_top_obj = espacio_mas_reservado()
     espacio_top = espacio_top_obj.nombre if espacio_top_obj else "Sin datos"
 
-    # Ingresos totales (puede ser None)
     ingresos = ingresos_totales() or 0
 
-    # Reservas por mes: transformamos el queryset en dict {nombre_mes: cantidad}
     reservas_mes_qs = reservas_por_mes()
     reservas_mes_dict = {}
     for item in reservas_mes_qs:
@@ -295,16 +311,17 @@ def occupancy_view(request):
     Muestra la ocupación total de franjas reservadas
     para una fecha seleccionada.
     """
-    if not es_admin(request.user):
+    if not request.user.is_staff:
         raise PermissionDenied
 
     fecha = request.GET.get("fecha")
-    context = {}
+    context = {
+        "ocupacion": {},  # SIEMPRE existe
+    }
 
     if fecha:
         fecha_parseada = parse_date(fecha)
 
-        # Construimos la matriz de ocupación
         espacios = Space.objects.filter(activo=True).order_by("nombre")
         franjas = TimeSlot.objects.all().order_by("hora_inicio")
 
@@ -315,7 +332,6 @@ def occupancy_view(request):
                 ocupado = esta_reservado(espacio.id, franja.id, fecha_parseada)
                 ocupacion[espacio.id][franja.id] = ocupado
 
-        # (Opcional) total de franjas reservadas, por si quieres usarlo en otro sitio
         resultado = ocupacion_total_por_dia(fecha_parseada)
         total_franjas = resultado.get("total_franjas", 0)
 
@@ -328,3 +344,4 @@ def occupancy_view(request):
         })
 
     return render(request, "occupancy/day.html", context)
+
