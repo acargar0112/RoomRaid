@@ -228,13 +228,17 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
+        booking = form.save(commit=False)
+
         form.instance.cliente = self.request.user
-        response = super().form_valid(form)
 
-        # F expression
-        incrementar_contador_reservas(form.instance.espacio)
+        booking.save()
 
-        return response
+        form.save_m2m()  # Guarda la relación M2M
+
+        incrementar_contador_reservas(booking.espacio)
+
+        return super().form_valid(form)
 
 class BookingDetailView(OwnerOrAdminBookingMixin, DetailView):
     """

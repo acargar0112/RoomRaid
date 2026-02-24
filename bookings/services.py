@@ -145,4 +145,4 @@ def esta_reservado(espacio_id, franja_id, fecha):
     """
     Devuelve True si existe una reserva para un espacio, franja y fecha.
     """
-    return Booking.objects.filter(espacio_id=espacio_id,franjas=franja_id,fecha=fecha,estado__in=["pendiente","confirmada"]).exists()
+    return Booking.objects.filter(espacio_id=espacio_id,franjas__id=franja_id,fecha=fecha,estado__in=["pendiente","confirmada"]).exists()
