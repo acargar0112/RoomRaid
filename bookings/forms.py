@@ -163,12 +163,18 @@ class BookingForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         """
-        Constructor que limita qué tarfias puedes elegir, si eres un cliente solo las activas, si eres admin todas
+        - Clientes: solo tarifas activas y espacios activos
+        - Admins: todas las tarifas y todos los espacios
         """
         self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
-        if not (self.user and self.user.is_staff):
+
+        if self.user and self.user.is_staff:
+            self.fields["tarifa"].queryset = Rate.objects.all()
+            self.fields["espacio"].queryset = Space.objects.all()
+        else:
             self.fields["tarifa"].queryset = Rate.objects.filter(activo=True)
+            self.fields["espacio"].queryset = Space.objects.filter(activo=True)
 
     def clean_fecha(self):
         """
