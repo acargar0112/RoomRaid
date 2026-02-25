@@ -18,8 +18,12 @@ services:
     build: .
     container_name: roomraid_web
     command: >
-      sh -c "python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+      sh -c "
+        python manage.py migrate &&
+        echo \"from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin', 'admin@admin.com', 'admin')\" | python manage.py shell &&
+        echo \"from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='usuario').exists() or User.objects.create_user('usuario', 'usuario@usuario.com', 'usuario')\" | python manage.py shell &&
+        python manage.py runserver 0.0.0.0:8000
+      "
     volumes:
       - .:/app
     ports:

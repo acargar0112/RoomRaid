@@ -6,5 +6,11 @@ email: admin@admin.com
 user: admin  
 password: admin
 
+# Usuario
+email: usuario@usuario.com  
+user: usuario  
+password: usuario
+
+
 # IMPORTANTE PARA USER!:
 ## Los usuarios se registran con un email obligatorio, y se inician sesión con el email y la contraseña
