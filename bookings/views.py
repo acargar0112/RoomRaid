@@ -70,7 +70,6 @@ class SpaceDeleteView(AdminOnlyMixin, DeleteView):
    Permite eliminar un espacio existente.
    """
    model = Space
-   template_name = "spaces/delete.html"
    success_url = reverse_lazy("space_list")
 
 
@@ -120,7 +119,6 @@ class TimeSlotDeleteView(AdminOnlyMixin, DeleteView):
    Permite eliminar una franja horaria existente.
    """
    model = TimeSlot
-   template_name = "timeslots/delete.html"
    success_url = reverse_lazy("timeslot_list")
 
 
@@ -170,7 +168,6 @@ class RateDeleteView(AdminOnlyMixin, DeleteView):
     Permite eliminar una tarifa existente.
     """
     model = Rate
-    template_name = "rates/delete.html"
     success_url = reverse_lazy("rate_list")
 
 
