@@ -83,7 +83,7 @@ class TimeSlotForm(forms.ModelForm):
 
 class RateForm(forms.ModelForm):
     """
-    Form para crear un Rate con validación de precio
+    Form para crear un Rate con validación de precio y filtrado de espacios activos.
     """
     class Meta:
         model = Rate
@@ -112,6 +112,11 @@ class RateForm(forms.ModelForm):
             }),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["espacios"].queryset = Space.objects.filter(activo=True)
+
     def clean_precio(self):
         """
         Validación de precio > 0
@@ -121,6 +126,7 @@ class RateForm(forms.ModelForm):
         if precio <= 0:
             raise forms.ValidationError("El precio debe ser mayor que 0")
         return precio
+
 
 
 class BookingForm(forms.ModelForm):
