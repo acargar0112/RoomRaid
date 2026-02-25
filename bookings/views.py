@@ -219,10 +219,7 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("booking_list")
 
     def dispatch(self, request, *args, **kwargs):
-        es_cliente = request.user.groups.filter(name="cliente").exists()
-        es_admin = request.user.is_staff
-
-        if not (es_cliente or es_admin):
+        if not request.user.is_authenticated or not request.user.activo:
             raise PermissionDenied
 
         return super().dispatch(request, *args, **kwargs)
@@ -315,8 +312,6 @@ def occupancy_view(request):
     Muestra la ocupación total de franjas reservadas
     para una fecha seleccionada.
     """
-    if not request.user.is_staff:
-        raise PermissionDenied
 
     fecha = request.GET.get("fecha")
     context = {
