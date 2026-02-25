@@ -136,7 +136,7 @@ class BookingForm(forms.ModelForm):
 
     class Meta:
         model = Booking
-        fields = ["espacio", "tarifa", "fecha", "notas"]
+        fields = ["espacio" ,"tarifa", "fecha", "notas","franjas"]
         widgets = {
             "espacio": forms.Select(attrs={
                 "class": "form-select"
