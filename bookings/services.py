@@ -30,20 +30,22 @@ def buscar_reservas(cliente=None, espacio=None, estado=None, fecha_inicio=None, 
     return qs
 
 
-def filtrar_espacios(capacidad_minima=None, recurso=None):
+def get_filtrar_espacios(self):
     """
     Devuelve espacios filtrados por:
     - Capacidad mínima
     - Activos
     """
 
-    qs = Space.objects.filter(activo=True)
+    capacidad = self.request.GET.get("capacidad")
+    recurso = self.request.GET.get("recurso")
 
-    if capacidad_minima and recurso:
-        qs = qs.filter(Q(capacidad__gte=capacidad_minima) | Q(recursos=recurso))
-    elif capacidad_minima:
-        qs = qs.filter(capacidad__gte=capacidad_minima)
-    elif recurso:
+    qs = Space.objects.all()
+
+    if capacidad:
+        qs = qs.filter(capacidad__gte=capacidad)
+
+    if recurso:
         qs = qs.filter(recursos=recurso)
 
     return qs
