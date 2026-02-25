@@ -1,19 +1,22 @@
+from django.db import IntegrityError
 from django.shortcuts import render, get_object_or_404, redirect
 import calendar
 
+from django.template.base import kwarg_re
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.utils.dateparse import parse_date
+from django.contrib import messages
 
 from core.mixins import AdminOnlyMixin, OwnerOrAdminBookingMixin
 from .models import Space, TimeSlot, Booking, Rate
 from .forms import SpaceForm, BookingForm, TimeSlotForm, RateForm
 from .services import (
     buscar_reservas,
-    filtrar_espacios,
+    get_filtrar_espacios,
     reservas_optimizadas,
     incrementar_contador_reservas,
     ocupacion_total_por_dia,
@@ -39,13 +42,7 @@ class SpaceListView(AdminOnlyMixin, ListView):
     context_object_name = "spaces"
 
     def get_queryset(self):
-        capacidad = self.request.GET.get("capacidad")
-        recurso = self.request.GET.get("recurso")
-
-        return filtrar_espacios(
-            capacidad_minima=capacidad,
-            recurso=recurso
-        )
+        return get_filtrar_espacios(self)
 
 
 class SpaceCreateView(AdminOnlyMixin, CreateView):
@@ -224,18 +221,26 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
 
         return super().dispatch(request, *args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
-        booking = form.save(commit=False)
 
-        form.instance.cliente = self.request.user
+        try:
+            booking = form.save(commit=False)
+            booking.cliente = self.request.user
+            booking.save()
+            form.save_m2m()  # Guarda la relación M2M
 
-        booking.save()
+            incrementar_contador_reservas(booking.espacio)
 
-        form.save_m2m()  # Guarda la relación M2M
+            return redirect(self.success_url)
 
-        incrementar_contador_reservas(booking.espacio)
-
-        return super().form_valid(form)
+        except IntegrityError:
+            messages.error(self.request, "Ya tienes una reserva en este espacio. Inténtalo con otro espacio.")
+            return redirect("booking_create")
 
 class BookingDetailView(OwnerOrAdminBookingMixin, DetailView):
     """
