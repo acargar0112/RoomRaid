@@ -32,5 +32,7 @@ urlpatterns = [
 
     # Stats & Occupancy
     path('stats/', stats_view, name='stats'),
-    path('occupancy/', occupancy_view, name='occupancy')
+    path('occupancy/', occupancy_view, name='occupancy'),
+
+    path("cambiar-tema/<str:tema>/", cambiar_tema, name="cambiar_tema")
 ]

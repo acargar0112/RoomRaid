@@ -27,6 +27,21 @@ from .services import (
     esta_reservado,
 )
 
+def cambiar_tema(request, tema):
+    if tema not in ["claro", "oscuro"]:
+        tema = "oscuro"
+
+    if request.user.is_authenticated:
+        request.user.profile.preferencia = tema
+        request.user.profile.save()
+
+    response = redirect(request.META.get("HTTP_REFERER", "/"))
+    response.set_cookie("ui_pref", tema, max_age=606024*365)  # 1 año
+
+    return response
+
+
+
 
 class HomeView(TemplateView):
     template_name = "base.html"
@@ -84,7 +99,6 @@ class SpaceDetailView(AdminOnlyMixin, DetailView):
 
 
 
-
 class TimeSlotListView(AdminOnlyMixin, ListView):
    """
    Muestra el listado de todas las franjas horarias disponibles.
@@ -120,8 +134,6 @@ class TimeSlotDeleteView(AdminOnlyMixin, DeleteView):
    """
    model = TimeSlot
    success_url = reverse_lazy("timeslot_list")
-
-
 
 
 
