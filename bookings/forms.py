@@ -190,28 +190,41 @@ class BookingForm(forms.ModelForm):
 
     def clean(self):
         """
-        Validación global para que no falte nada y busque si ya existe una reserva con la misma franja horaria
+        Validación global para que no falte nada (espacio, fechas, franjas), que no formen bloque continuo, que no haya otra reserva en el mismo espacio, fecha y franja, y para que un usuario no pueda tener más de una reserva el mismo día
         """
         cleaned = super().clean()
         espacio = cleaned.get("espacio")
         fecha = cleaned.get("fecha")
-        franja = cleaned.get("franjas")
+        franjas = cleaned.get("franjas")
 
-        if not (espacio and fecha and franja):
+        if not (espacio and fecha and franjas):
             return cleaned
 
         existe = Booking.objects.filter(
             espacio=espacio,
             fecha=fecha,
             estado__in=["pendiente", "confirmada"]
-        ).filter(franjas__in=franja).distinct()
+        ).filter(franjas__in=franjas).distinct()
 
         if existe.exists():
             raise forms.ValidationError(
                 "Algunas de las franjas horarias ya están reservadas para esta sala"
             )
 
+        if self.user:
+            ya_tiene = Booking.objects.filter(
+                cliente=self.user,
+                fecha=fecha,
+                estado__in=["pendiente", "confirmada"]
+            ).exists()
+
+            if ya_tiene:
+                raise forms.ValidationError(
+                    "Ya tienes una reserva para este día. No puedes crear más de una."
+                )
+
         return cleaned
+
 
 
 
