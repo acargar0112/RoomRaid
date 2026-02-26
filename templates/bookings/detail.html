@@ -7,6 +7,7 @@
 {% block contenido-details %}
     <p><strong>Fecha:</strong> {{ booking.fecha }}</p>
     <p><strong>Espacio:</strong> {{ booking.espacio.nombre }}</p>
+    <p><strong>Coste total:</strong> {{ booking.coste_total }}€</p>
     <p><strong>Estado:</strong> {{ booking.get_estado_display }}</p>
 
     {%  if booking.cliente %}
