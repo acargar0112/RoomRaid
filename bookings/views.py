@@ -240,6 +240,15 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
         try:
             booking = form.save(commit=False)
             booking.cliente = self.request.user
+
+            tarifa = booking.tarifa
+            franjas = form.cleaned_data.get("franjas", [])
+
+            precio = tarifa.precio if tarifa else 0
+            num_franjas = len(franjas)
+
+            booking.coste_total = precio * num_franjas
+
             booking.save()
             form.save_m2m()  # Guarda la relación M2M
 
