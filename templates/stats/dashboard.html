@@ -34,10 +34,21 @@
     </div>
 
     <h4 class="mt-4">Reservas por mes</h4>
-    <ul>
-        {% for mes, cantidad in reservas_por_mes.items %}
-            <li>{{ mes }}: {{ cantidad }}</li>
+
+    <table class="table table-striped table-hover text-center align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Mes</th>
+                <th>Total de reservas</th>
+            </tr>
+        </thead>
+        <tbody> {% for mes, cantidad in reservas_por_mes.items %}
+            <tr>
+                <td><strong>{{ mes }}</strong></td>
+                <td class="fw-bold">{{ cantidad }}</td>
+            </tr>
         {% endfor %}
-    </ul>
+        </tbody>
+    </table>
 
 {% endblock %}

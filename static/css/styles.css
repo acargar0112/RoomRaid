@@ -67,6 +67,10 @@ input:focus, select:focus, textarea:focus {
     outline: none;
 }
 
+td.bg-success {
+    background-color: #428E4E !important;
+}
+
 .btn {
     border: none !important;
     padding: 10px 18px !important;
@@ -188,6 +192,10 @@ body.dark-mode {
     color: #e6e6e6;
 }
 
+body.dark-mode h2 {
+    color: #e6e6e6;
+}
+
 body.dark-mode .navbar {
     background: linear-gradient(135deg, #3A0242, #7A4A78) !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.6);
@@ -205,7 +213,7 @@ body.dark-mode .card {
     color: #f0f0f0;
 }
 
-body.dark-mode input,
+body.dark-mode input:not([type="checkbox"]),
 body.dark-mode select,
 body.dark-mode textarea {
     background: #2a2a2a !important;
@@ -254,4 +262,14 @@ body.dark-mode .table-hover tbody tr:hover {
 body.dark-mode footer,
 body.dark-mode footer * {
     color: #e0e0e0 !important;
+}
+
+body.dark-mode td.bg-success {
+    background-color: #428E4E !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode td.bg-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
 }
