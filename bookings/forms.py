@@ -1,4 +1,8 @@
+from datetime import datetime
+
 from django import forms
+from django.core.validators import ValidationError
+
 from bookings.models import Space, TimeSlot, Rate, Booking
 from django.utils import timezone
 
@@ -176,6 +180,17 @@ class BookingForm(forms.ModelForm):
             self.fields["tarifa"].queryset = Rate.objects.filter(activo=True)
             self.fields["espacio"].queryset = Space.objects.filter(activo=True)
 
+        if "fecha" in self.data:
+            try:
+                fecha = datetime.strptime(self.data.get("fecha"), "%Y-%m-%d").date()
+                if fecha == timezone.localdate():
+                    ahora = timezone.localtime().time()
+                    self.fields["franjas"].queryset = TimeSlot.objects.filter(
+                        activo=True,
+                        hora_inicio__gte=ahora
+                    )
+            except ValueError:
+                pass
     def clean_fecha(self):
         """
         Validacion de fechas para que no sean anterior a hoy
