@@ -87,7 +87,7 @@ def clientes_con_reservas_activas():
     Devuelve clientes con el número de reservas activas
     """
 
-    return User.objects.annotate(reservas_activas=Count("booking_set", filter=Q(booking_set__estado="confirmada"))).order_by("-reservas_activas")
+    return User.objects.annotate(reservas_activas=Count("reserva", filter=Q(reserva__estado="confirmada"))).order_by("-reservas_activas")
 
 def top_salas_mas_usadas(top=5):
     """

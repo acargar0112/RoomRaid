@@ -24,7 +24,7 @@ from .services import (
     total_reservas,
     espacio_mas_reservado,
     ingresos_totales,
-    esta_reservado,
+    esta_reservado, espacios_con_numero_de_franjas, clientes_con_reservas_activas, top_salas_mas_usadas,
 )
 
 def cambiar_tema(request, tema):
@@ -310,11 +310,19 @@ def stats_view(request):
         nombre_mes = calendar.month_name[numero_mes] if numero_mes else "Sin mes"
         reservas_mes_dict[nombre_mes] = cantidad
 
+    espacios_franjas = espacios_con_numero_de_franjas()
+    clientes_activos = clientes_con_reservas_activas()
+    top_salas = top_salas_mas_usadas()
+
     context = {
         "total_reservas": total,
         "espacio_top": espacio_top,
         "ingresos_totales": ingresos,
         "reservas_por_mes": reservas_mes_dict,
+
+        "espacios_franjas": espacios_franjas,
+        "clientes_activos": clientes_activos,
+        "top_salas": top_salas,
     }
 
     return render(request, "stats/dashboard.html", context)

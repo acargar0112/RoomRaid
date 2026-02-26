@@ -51,4 +51,58 @@
         </tbody>
     </table>
 
+    <h4 class="mt-5">Espacios con más franjas reservadas</h4>
+    <table class="table table-striped table-hover text-center align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Espacio</th>
+                <th>Total de franjas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for espacio in espacios_franjas %}
+                <tr>
+                    <td>{{ espacio.nombre }}</td>
+                    <td class="fw-bold">{{ espacio.total_franjas }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4 class="mt-5">Clientes con más reservas activas</h4>
+    <table class="table table-striped table-hover text-center align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Cliente</th>
+                <th>Reservas activas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes_activos %}
+                <tr>
+                    <td>{{ cliente.email }}</td>
+                    <td class="fw-bold">{{ cliente.reservas_activas }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4 class="mt-5">Top salas más usadas</h4>
+    <table class="table table-striped table-hover text-center align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Espacio</th>
+                <th>Total de reservas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sala in top_salas %}
+                <tr>
+                    <td>{{ sala.nombre }}</td>
+                    <td class="fw-bold">{{ sala.total_reservas }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}
