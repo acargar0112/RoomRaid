@@ -49,7 +49,7 @@ def logout_view(request):
 @login_required
 def profile_view(request):
     """
-    FBV para crear o editar el perfil de usuario
+    FBV para editar/crear el profile de un usuario
     """
     profile = request.user.profile
 
@@ -57,9 +57,16 @@ def profile_view(request):
         form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect("profile")
+
+            response = redirect("profile")
+
+            response.set_cookie("ui_pref", profile.preferencia)
+
+            return response
+
     else:
         form = ProfileForm(instance=profile)
 
     return render(request, "accounts/profile.html", {"form": form})
+
 

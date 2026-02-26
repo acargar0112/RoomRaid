@@ -7,6 +7,7 @@ class UIPreferenceMiddleware(MiddlewareMixin):
         Sincroniza la preferencia de interfaz entre:
         - Cookie 'ui_pref'
         - Profile.preferencia
+        Así el estilo de la página web se cambiará teniendo en cuenta la variable preferencia del perfil que estará sincronizada con la cookie ui_pref
     """
     def process_request(self, request):
         cookie_pref = request.COOKIES.get("ui_pref")
