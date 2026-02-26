@@ -264,6 +264,10 @@ body.dark-mode footer * {
     color: #e0e0e0 !important;
 }
 
+body.dark-mode ::placeholder {
+    color: #e6e6e6 !important;
+}
+
 body.dark-mode td.bg-success {
     background-color: #428E4E !important;
     color: #ffffff !important;
