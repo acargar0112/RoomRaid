@@ -127,7 +127,7 @@ def total_reservas():
     """
     Devuelve el número total de reservas registradas
     """
-    return Booking.objects.count()
+    return Booking.objects.filter(estado__in=["pendiente","confirmada"]).count()
 
 def espacio_mas_reservado():
     """
