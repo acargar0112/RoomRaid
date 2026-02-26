@@ -10,22 +10,32 @@ User = get_user_model()
 
 def buscar_reservas(cliente=None, espacio=None, estado=None, fecha_inicio=None, fecha_fin=None):
     """
-    Permite hacer búsquedas avanzadas por cliente, espacio, estado y rango de fechas.
-    Todos los parametros son opciones, para que no haya problemas si solo se quiere buscar por alguno en concreto.
-    RETURN: Devuelve un queryset filtado usando Q objects.
-    La variable "qs" significa "QuerySet"
+    Permite realizar búsquedas avanzadas de reservas combinando varios filtros opcionales.
+
+    - Cliente y espacio
+    - Estado.
+    - El rango de fechas
+
+    Todos son opcionales.
     """
 
     qs= Booking.objects.all()
 
-    if cliente:
-        qs = qs.filter(Q(cliente=cliente))
-    if espacio:
-        qs = qs.filter(Q(espacio=espacio))
-    if estado:
-        qs = qs.filter(Q(estado=estado))
-    if fecha_inicio and fecha_fin:
-        qs = qs.filter(Q(fecha__range=(fecha_inicio, fecha_fin)))
+    cliente_id = cliente if cliente not in [None, ""] else None
+    espacio = espacio if espacio not in [None, ""] else None
+
+    if cliente_id or espacio:
+        qs = qs.filter(Q(cliente__id=cliente_id) | Q(espacio__id=espacio))
+
+        if estado:
+            qs = qs.filter(estado=estado)
+
+        if fecha_inicio and fecha_fin:
+            qs = qs.filter(fecha__range=(fecha_inicio, fecha_fin))
+        elif fecha_inicio:
+            qs = qs.filter(fecha__qte=fecha_inicio)
+        elif fecha_fin:
+            qs = qs.filter(fecha__lte=fecha_fin)
 
     return qs
 
