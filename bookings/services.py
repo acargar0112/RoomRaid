@@ -22,20 +22,20 @@ def buscar_reservas(cliente=None, espacio=None, estado=None, fecha_inicio=None, 
     qs= Booking.objects.all()
 
     cliente_id = cliente if cliente not in [None, ""] else None
-    espacio = espacio if espacio not in [None, ""] else None
+    espacio_id = espacio if espacio not in [None, ""] else None
 
-    if cliente_id or espacio:
-        qs = qs.filter(Q(cliente__id=cliente_id) | Q(espacio__id=espacio))
+    if cliente_id or espacio_id:
+        qs = qs.filter(Q(cliente__id=cliente_id) | Q(espacio__id=espacio_id))
 
-        if estado:
-            qs = qs.filter(estado=estado)
+    if estado:
+        qs = qs.filter(estado=estado)
 
-        if fecha_inicio and fecha_fin:
-            qs = qs.filter(fecha__range=(fecha_inicio, fecha_fin))
-        elif fecha_inicio:
-            qs = qs.filter(fecha__qte=fecha_inicio)
-        elif fecha_fin:
-            qs = qs.filter(fecha__lte=fecha_fin)
+    if fecha_inicio and fecha_fin:
+        qs = qs.filter(fecha__range=(fecha_inicio, fecha_fin))
+    elif fecha_inicio:
+        qs = qs.filter(fecha__qte=fecha_inicio)
+    elif fecha_fin:
+        qs = qs.filter(fecha__lte=fecha_fin)
 
     return qs
 
