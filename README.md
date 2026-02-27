@@ -2,7 +2,7 @@
 
 # RoomRaid: Coworking Scheduler
 
-Nuestro proyecto final consiste en desarrollar una plataforma web en Django para gestionar la reserva de salas en un coworking, con administración de espacios, franjas horarias y tarifas, y un sistema de reservas que valida disponibilidad. 
+Nuestro proyecto final consiste en desarrollar una plataforma web en Django para gestionar la reserva de salas en un coworking, con administración de espacios, franjas horarias y tarifas, y un sistema de reservas que valida disponibilidad.
 Funcionalidades principales y grupos de usuarios.
 
 La aplicación está pensada para dos tipos de usuarios:
@@ -17,25 +17,26 @@ La plataforma funciona mediante Docker Compose y utiliza PostgreSQL como base de
 Primero se configuraron los archivos Dockerfile y docker-compose.yml partiendo de las variables de entorno definidas en el archivo .env
 
 #### 2. Instalación de Docker
-Windows: Instalar desde la página oficial de Docker.
+Windows: Instalar desde la página oficial de Docker |
 Linux: Puedes instalarlo desde terminal con: pip install docker
 
 #### 3. Dependencias del proyecto
 En el archivo requirements.txt se añadió: psycopg2-binary==2.9.11
+
 Este paquete permite usar PostgreSQL como base de datos dentro de Docker.
 
 #### 4. Migraciones de base de datos
-Antes de levantar el servidor, ejecuta las migraciones:
-docker-compose exec web python manage.py migrate
+Antes de levantar el servidor, ejecuta las migraciones: docker-compose exec web python manage.py migrate
 
 #### 5. Arranque del servidor
 Para iniciar la aplicación:
-Windows: docker compose up - -build
+Windows: docker compose up - -build |
 Linux: docker-compose up - -build
+
 Una vez activo, la aplicación estará disponible en:[ http://localhost:8000](http://localhost:8000/)
 
 #### 6. Apagar el servidor
-Windows: docker compose down
+Windows: docker compose down |
 Linux: docker-compose down
 
 NOTA: recuerda ejecutar todos los comandos dentro de tu entorno virtual.
@@ -65,8 +66,7 @@ Cuando se nos mandó el trabajo, nuestro equipo se reunió para organizar todo y
 Cada avance se subía mediante Pull Requests, configuradas para que otro miembro del grupo tuviera que revisarlas antes de mergear. Así nos asegurábamos de que todo funcionara bien y no se pisara el trabajo de nadie.
 En esa primera reunión también acordamos seguir los roles propuestos por el profesor, con algunos cambios que especificamos a continuación:
 
-### Andrés Cárdenas 
-Rol 1
+### Andrés Cárdenas - Rol 1
 - Relaciones
 - Modelos bookings
 - Templates y CSS
@@ -76,7 +76,7 @@ Rol 1
 - Consultas ORM
 - Documentación en modelos necesaria requirements.txt.
 
-#### Andrés Rivero - Rol 2
+### Andrés Rivero - Rol 2
 - Forms
 - Admin
 - Accounts (Model User, Forms, Admin, Urls, Views)
@@ -84,7 +84,7 @@ Rol 1
 - Mixins
 - Middleware
 
-#### Alejandra Herrera-Picazo - Rol 3
+### Alejandra Herrera-Picazo - Rol 3
 - CRUD (CBV)
 - FBV
 - Cookies y Sessions
@@ -105,11 +105,11 @@ Al entrar en la plataforma sin estar registrado o sin haber iniciado sesión, la
 
 La sesión que hemos decidido implementar se aplica a occupancy.
 
-Nuestra sesión se escribe cuando el usuario escribe una fecha y la envía mediante un GET. Esta se guarda mediante request.session[“occ_fecha”], que se encuentra en nuestra view. Cuando el usuario vuelve a la vista, esta recupera automáticamente la fecha almacenada previamente y la muestra. 
+Nuestra sesión se escribe cuando el usuario escribe una fecha y la envía mediante un GET. Esta se guarda mediante request.session[“occ_fecha”], que se encuentra en nuestra view. Cuando el usuario vuelve a la vista, esta recupera automáticamente la fecha almacenada previamente y la muestra.
 
 ## Plan de Hitos y Cronología de Desarrollo
 ### Fase 1 — Base operativa
-Periodo: 18/02/2026 – 21/02/2026
+Periodo: 18/02/2026 – 21/02/2026 |
 Objetivo: Establecer la estructura base del proyecto y preparar el entorno de trabajo.
 
 Tareas principales:
@@ -122,7 +122,7 @@ Tareas principales:
 - Creación inicial de requirements.txt, activación de login/logout en settings y urls.py
 
 ### Fase 2 — Reservas completas y control de acceso
-Periodo: 22/02/2026 – 25/02/2026
+Periodo: 22/02/2026 – 25/02/2026 |
 Objetivo: Implementar el flujo central de reservas, control de usuarios y CRUD completo.
 
 Tareas principales:
@@ -137,11 +137,11 @@ Tareas principales:
 - Mejoras de estilo, responsive y cookies de tema en base.html
 
 ## Fase 3 — Estadísticas, optimización y middleware
-Periodo: 24/02/2026 – 26/02/2026
+Periodo: 24/02/2026 – 26/02/2026 |
 Objetivo: Añadir analítica, rendimiento y trazabilidad del sistema.
 
 Tareas principales:
-- Implementación de UIPreferenceMiddleware y BookingAuditMiddleware 
+- Implementación de UIPreferenceMiddleware y BookingAuditMiddleware
 - Consultas agregadas con annotate, aggregate, select_related, prefetch_related
 - Creación de vistas dashboard y occupancy con estadísticas
 - Refactorización de consultas ORM y filtros de reservas
