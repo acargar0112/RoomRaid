@@ -39,7 +39,7 @@ class RegisterForm(forms.ModelForm):
         }
 
 
-    def clean_password(self):
+    def clean(self):
         """
         Validación de coincidencia de contraseñas
         """

@@ -33,7 +33,7 @@ def buscar_reservas(cliente=None, espacio=None, estado=None, fecha_inicio=None, 
     if fecha_inicio and fecha_fin:
         qs = qs.filter(fecha__range=(fecha_inicio, fecha_fin))
     elif fecha_inicio:
-        qs = qs.filter(fecha__qte=fecha_inicio)
+        qs = qs.filter(fecha__gte=fecha_inicio)
     elif fecha_fin:
         qs = qs.filter(fecha__lte=fecha_fin)
 
