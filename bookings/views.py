@@ -345,6 +345,12 @@ def occupancy_view(request):
     """
 
     fecha = request.GET.get("fecha")
+
+    if fecha:
+        request.session["occ_fecha"] = fecha
+
+    fecha = fecha or request.session.get("occ_fecha")
+
     context = {
         "ocupacion": {},  # SIEMPRE existe
     }
