@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load dict %}
+
+{% block titulo %}Ocupación{% endblock %}
+
+{% block contenido %}
+
+    <h2 class="mb-4">Ocupación diaria</h2>
+
+    <form method="get" class="mb-4">
+        <label for="fecha">Selecciona una fecha:</label>
+        <input type="date" id="fecha" name="fecha" value="{{ fecha|default:'' }}">
+        <button type="submit" class="btn btn-primary">Ver ocupación</button>
+    </form>
+
+    <h4 class="mb-3">Ocupación del día {{ fecha }}</h4>
+
+    <table class="table table-bordered text-center align-middle">
+        <thead class="table-light">
+        <tr>
+            <th>Espacio</th>
+            {% for franja in franjas %}
+                <th>{{ franja.hora_inicio }} - {{ franja.hora_fin }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for espacio in espacios %}
+            <tr>
+                <td><strong>{{ espacio.nombre }}</strong></td>
+
+                {% for franja in franjas %}
+                    {% with ocupado=ocupacion|dict_get:espacio.id|dict_get:franja.id %}
+                        {% if ocupado %}
+                            <td class="bg-danger text-white">Reservado</td>
+                        {% else %}
+                            <td class="bg-success text-white">Libre</td>
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

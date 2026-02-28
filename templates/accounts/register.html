@@ -1,0 +1,11 @@
+{% extends 'form_base.html' %}
+
+{% block titulo %}Registrarse{% endblock %}
+
+{% block form-titulo %}
+<h2>Crear cuenta</h2>
+{% endblock %}
+
+{% block add_botones %}
+<a href="{% url 'login' %}" class="btn btn-secondary ms-2">Ya tengo una cuenta</a>
+{% endblock %}

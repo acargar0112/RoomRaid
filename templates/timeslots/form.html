@@ -1,0 +1,11 @@
+{% extends 'form_base.html' %}
+
+{% block titulo %}Formulario franja{% endblock %}
+
+{% block form-titulo %}
+    <h2>Crear franja</h2>
+{% endblock %}
+
+{% block add_botones %}
+    <a href="{% url 'timeslot_list'  %}" class="btn btn-secondary">Volver</a>
+{% endblock %}

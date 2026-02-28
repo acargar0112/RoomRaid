@@ -1,0 +1,27 @@
+{% extends 'detail_base.html' %}
+
+{% block titulo %}Detalle espacio{% endblock %}
+
+{% block titulo-details %}<h2>Detalle del espacio</h2>{%  endblock %}
+
+{% block contenido-details %}
+    <p><strong>Nombre:</strong> {{ spaces.nombre }}</p>
+    <p><strong>Capacidad:</strong> {{ spaces.capacidad }}</p>
+    <p><strong>Ubicación:</strong> {{ spaces.ubicacion }}</p>
+    <p><strong>Recursos:</strong> {{ spaces.get_recursos_display }}</p>
+    <p><strong>Activo:</strong> {{ spaces.activo }}</p>
+
+    {% if spaces.administrador %}
+        <p><strong>Administrador:</strong> {{ spaces.administrador }}</p>
+    {% endif %}
+
+    <p><strong>Reservas totales:</strong> {{ spaces.contador_reservas }}</p>
+{% endblock %}
+
+{% block botones-details %}
+    <a href="{% url 'space_list' %}" class="btn btn-secondary">Volver</a>
+
+    {% if user.is_superuser %}
+        <a href="{% url 'space_update' spaces.id %}"  class="btn btn-primary ms-2">Editar</a>
+    {% endif %}
+{% endblock %}

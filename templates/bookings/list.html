@@ -1,0 +1,86 @@
+{% extends "list_base.html" %}
+
+{% block titulo %}Reservas{% endblock %}
+
+{% block list-titulo %}<h2>Reservas</h2>{% endblock %}
+
+{% block boton-list %}
+    <a href="{% url 'booking_create' %}" class="btn btn-primary">Crear reserva</a>
+{% endblock %}
+
+
+{% block cabecera-list %}
+    <tr>
+        <th>Fecha</th>
+        <th>Espacio</th>
+        <th>Estado</th>
+
+        {% if user.is_superuser %}
+        <th>Cliente</th>
+        {% endif %}
+
+        <th>Acciones</th>
+    </tr>
+
+{% endblock %}
+
+{% block filas-list %}
+{% for booking in bookings %}
+    <tr>
+        <td>{{ booking.fecha }}</td>
+        <td>{{ booking.espacio.nombre }}</td>
+        <td>{{ booking.get_estado_display }}</td>
+
+        {% if user.is_superuser %}
+            <td>{{ booking.cliente }}</td>
+        {% endif %}
+
+        <td>
+            <a href="{% url 'booking_detail' booking.id %}" class="btn btn-sm btn-info">Ver</a>
+        </td>
+    </tr>
+{% endfor %}
+{% endblock %}
+
+{% block filtrado %}
+    <form method="get" class="row g-3 mb-4">
+
+        {% if user.is_superuser %}
+        <div class="col-md-3">
+            <label class="form-label">Cliente</label>
+            <input type="number" name="cliente" class="form-control" placeholder="ID cliente" value="{{ request.GET.cliente }}">
+        </div>
+        {% endif %}
+
+        <div class="col-md-3">
+            <label class="form-label">Espacio</label>
+            <input type="number" name="espacio" class="form-control" placeholder="ID espacio" value="{{ request.GET.espacio }}">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Estado</label>
+            <select name="estado" class="form-select">
+                <option value="">Todos</option>
+                <option value="pendiente" {% if request.GET.estado == "pendiente" %}selected{% endif %}>Pendiente</option>
+                <option value="confirmada" {% if request.GET.estado == "confirmada" %}selected{% endif %}>Confirmada</option>
+                <option value="cancelada" {% if request.GET.estado == "cancelada" %}selected{% endif %}>Cancelada</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Desde</label>
+            <input type="date" name="fecha_inicio" class="form-control" value="{{ request.GET.fecha_inicio }}">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Hasta</label>
+            <input type="date" name="fecha_fin" class="form-control" value="{{ request.GET.fecha_fin }}">
+        </div>
+
+        <div class="col-md-12 mt-3">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="{% url 'booking_list' %}" class="btn btn-secondary">Limpiar</a>
+        </div>
+    </form>
+
+{% endblock %}

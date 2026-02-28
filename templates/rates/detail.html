@@ -1,0 +1,32 @@
+{% extends 'detail_base.html' %}
+
+{% block titulo %}Detalle tarifa{% endblock %}
+
+{% block titulo-details %}<h2>Detalle de la tarifa</h2>{% endblock %}
+
+{% block contenido-details %}
+    <p><strong>Nombre:</strong>{{ rate.nombre }}</p>
+    <p><strong>Precio:</strong>{{ rate.precio }}</p>
+    <p><strong>Activo:</strong>{{ rate.activo }}</p>
+
+    {% if rate.condiciones %}
+        <p><strong>Condiciones:</strong>{{ rate.condiciones }}</p>
+    {% endif %}
+
+    <p><strong>Espacios asociados:</strong></p>
+    <ul>
+        {% for espacio in rate.espacios.all %}
+            <li>{{ espacio.nombre }}</li>
+            {% empty %}
+            <li>No hay espacios asociados a esta tarifa.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block botones-details %}
+<a href="{% url 'rate_list' %}" class="btn btn-secondary">Volver</a>
+
+{% if user.is_superuser %}
+<a href="{% url 'rate_update' rate.id %}" class="btn btn-primary ms-2">Editar</a>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'form_base.html' %}
+
+{% block titulo %}Login{% endblock %}
+
+{% block form-titulo %}
+<h2>Iniciar sesión</h2>
+{% endblock %}
+
+{% block add_botones %}
+<a href="{% url 'register' %}" class="btn btn-secondary ms-2">Registrarse</a>
+{% endblock %}

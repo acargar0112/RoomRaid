@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block titulo %}Listado{% endblock %}
+
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    {% block list-titulo %}
+    <h2>Listado</h2>
+    {% endblock %}
+
+    {% block boton-list %}{% endblock %}
+</div>
+
+<table class="table table-striped table-hover">
+    <thead>
+        {% block cabecera-list %}{% endblock %}
+    </thead>
+    <tbody>
+        {% block filas-list %}{% endblock %}
+    </tbody>
+</table>
+
+
+    {% block filtrado %}
+    {% endblock %}
+
+{% endblock %}

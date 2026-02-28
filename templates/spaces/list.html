@@ -1,0 +1,39 @@
+{% extends "list_base.html" %}
+
+{% block titulo %}Espacios{% endblock %}
+
+{% block list-titulo %}<h2>Espacios</h2>{% endblock %}
+
+{% block boton-list %}
+{% if user.is_superuser %}
+    <a href="{% url 'space_create' %}" class="btn btn-primary">Crear espacio</a>
+{% endif %}
+{% endblock %}
+
+{% block cabecera-list %}
+    <tr>
+        <th>Nombre</th>
+        <th>Capacidad</th>
+        <th>Ubicación</th>
+        <th>Activo</th>
+        <th>Acciones</th>
+    </tr>
+{% endblock %}
+
+{% block filas-list %}
+{% for space in spaces %}
+    <tr>
+        <td>{{ space.nombre }}</td>
+        <td>{{ space.capacidad }}</td>
+        <td>{{ space.ubicacion }}</td>
+        <td>{{ space.activo }}</td>
+        <td>
+            <a href="{% url 'space_detail' space.id %}" class="btn btn-sm btn-info">Ver</a>
+
+            {% if user.is_superuser %}
+                <a href="{% url 'space_update' space.id %}" class="btn btn-sm btn-warning">Editar</a>
+            {% endif %}
+        </td>
+    </tr>
+{% endfor %}
+{% endblock %}

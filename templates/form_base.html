@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block titulo %}Formulario{% endblock %}
+
+{% block contenido %}
+<div class="card shadow-sm p-4">
+    {% block form-titulo %}
+    <h2 class="mb-4">Formulario</h2>
+     {% endblock %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+
+        {% block add_botones %}{% endblock %}
+    </form>
+</div>
+{% endblock %}

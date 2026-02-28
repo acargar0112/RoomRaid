@@ -1,0 +1,11 @@
+{% extends 'form_base.html' %}
+
+{% block titulo %}Formulario espacio{% endblock %}
+
+{% block form-titulo %}
+    <h2>Crear espacio</h2>
+{% endblock %}
+
+{% block add_botones %}
+    <a href="{% url 'space_list'  %}" class="btn btn-secondary">Volver</a>
+{% endblock %}
